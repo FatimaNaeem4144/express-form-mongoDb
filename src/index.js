@@ -1,5 +1,10 @@
-const express = require("express")
-const app = express()
+
+require('dotenv').config();
+const connectDB = require('./connectmongo');
+connectDB();
+
+const express = require("express");
+const app = express();
 const path = require("path")
 const hbs = require("hbs")
 const templatePath = path.join(__dirname,'../templates')
@@ -54,8 +59,8 @@ app.post("/login", async (req,res)=>{
         res.send("Wrong Details")
     }
 })
+const PORT = process.env.PORT
 
-
-app.listen(7001,()=>{
-    console.log("port connected");
+app.listen(PORT,()=>{
+    console.log("Server is running on port",PORT);
 })
