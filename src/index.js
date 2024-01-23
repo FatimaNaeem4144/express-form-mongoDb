@@ -25,8 +25,7 @@ app.get("/signup",(req,res)=>{
 app.get("/login",(req,res)=>{
     res.render("login")
 })
-
-app.post("/signup", async (req,res)=>{
+app.post("/signup", async (req, res) => {
     const { name, password, confirmpassword } = req.body;
 
     if (password !== confirmpassword) {
@@ -39,28 +38,37 @@ app.post("/signup", async (req,res)=>{
         confirmpassword: confirmpassword,
     };
 
-
-    await collection.insertMany([data])
-    res.render("home")
-})
-
-app.post("/login", async (req,res)=>{
-    try{
-        const check=await collection.findOne({name:req.body.name})
-
-        if(check.password===req.body.password){
-            res.render("home")
-        }
-        else{
-            res.send("Wrong Password")
-        }
+    try {
+        console.log("Inserting data into MongoDB:", data);
+        // Insert data into MongoDB
+        await collection.create(data);
+        console.log("Data inserted successfully");
+        res.render("home");
+    } catch (error) {
+        console.error("Error saving data to MongoDB:", error);
+        res.send("Error saving data to MongoDB");
     }
-    catch{
-        res.send("Wrong Details")
+});
+
+
+app.post("/login", async (req, res) => {
+    try {
+        const check = await collection.findOne({ name: req.body.name });
+
+        if (check && check.password === req.body.password) {
+            res.render("home");
+        } else {
+            res.send("Wrong Password");
+        }
+    } catch (error) {
+        console.error("Error checking login credentials:", error);
+        res.send("Error checking login credentials");
     }
-})
+});
 const PORT = process.env.PORT
 
 app.listen(PORT,()=>{
     console.log("Server is running on port",PORT);
 })
+
+
